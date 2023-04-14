@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.13;
 
-import {ERC137Resolver} from "./ERC137Resolver.sol";
+import {ERC137Resolver} from "./interfaces/ERC137Resolver.sol";
 
 /**
  * @title ModularResolver
@@ -26,17 +26,6 @@ contract ModularResolver is ERC137Resolver {
     );
 
     ///////////////////////////////////////////////////////////////////////////////
-    ///                                  STRUCTS                                ///
-    ///////////////////////////////////////////////////////////////////////////////
-
-    /// @notice Data stored about certain nodes and how they should resolve
-    struct CCIPSettings {
-        string[] urls; // URLs of CCIP gateways
-        string pubKey; // Public Key to accept signature of
-        // other stuff here
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
     ///                                  EVENTS                                 ///
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -53,10 +42,9 @@ contract ModularResolver is ERC137Resolver {
 
     bytes4 public selector = this.callbackAddr.selector;
 
-    /// @notice The mapping of node to CCIPSettings
-    mapping(bytes32 => CCIPSettings) public nodeToSettings;
-
     string[] urls = ["http://localhost:3000"];
+
+    bytes32 publicKey;
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                  METHODS                                ///
