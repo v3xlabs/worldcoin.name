@@ -3,6 +3,8 @@ pragma solidity ^0.8.13;
 
 import {ERC137Resolver} from "./interfaces/ERC137Resolver.sol";
 
+// TODO: leverage eip 1167 or smthing, something something delegate call idk lmeow.
+
 /**
  * @title ModularResolver
  * @dev This contract is the first version of the modular resolver.

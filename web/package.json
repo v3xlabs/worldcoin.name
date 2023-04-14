@@ -6,11 +6,13 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "next",
-        "lint": "eslint -c .eslintrc.json --ext .ts ./src"
+        "lint": "eslint -c .eslintrc.json --ext .ts ./src",
+        "build": "next build",
+        "start": "next start"
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
+    "license": "AGPL-3.0",
     "dependencies": {
         "autoprefixer": "^10.4.14",
         "next": "^13.3.0",
