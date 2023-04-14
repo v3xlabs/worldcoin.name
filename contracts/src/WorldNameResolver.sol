@@ -50,9 +50,6 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
     /// @notice This stores a reference to the worldcoin smartcontracts
     IWorldID public worldID;
 
-    /// @notice The mapping of name to owner
-    mapping(bytes32 => address) public nodeToOwner;
-
     /// @notice The mapping of used nullifier
     mapping(uint256 => bool) internal nullifierHashes;
 
@@ -61,6 +58,14 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
 
     /// @dev The contract's external nullifier hash
     uint256 internal immutable externalNullifier;
+
+    /// @dev Linking between tokenId and bytes32
+    /// TODO: this is probably hella inneficient and im going to ask a mentor how to do it better lol, please dont let me forget about this comment
+    mapping(uint256 => bytes32) internal tokenIdToNode;
+    mapping(bytes32 => uint256) internal nodeToTokenId;
+
+    /// @dev Current index of tokenId
+    uint256 internal nextTokenId;
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                  METHODS                                ///
@@ -119,7 +124,7 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
         worldID.verifyProof(
             root,
             groupId,
-            abi.encodePacked(to).hashToField(),
+            abi.encodePacked(abi.encodePacked(to).hashToField(), abi.encodePacked(node)).hashToField(),
             nullifier,
             externalNullifier,
             proof
@@ -127,7 +132,12 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
 
         nullifierHashes[nullifier] = true;
 
-        // _mint()
+        tokenIdToNode[nextTokenId] = node;
+        nodeToTokenId[node] = nextTokenId;
+
+        _mint(to, nextTokenId);
+
+        nextTokenId++;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
