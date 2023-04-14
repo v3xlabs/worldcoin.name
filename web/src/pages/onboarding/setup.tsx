@@ -21,11 +21,11 @@ function OnboardingSetup() {
             }}
         >
             <div className="flex flex-col justify-center items-center">
-                <h3 className="text-gray-800 text-justify mt-4 w-80">
+                <h3 className="text-gray-800 text-justify mt-4">
                     You can claim a <b>Worldname</b> by signing in with WorldID.
                     It is free because it is <b>sybil resistant</b>.
                 </h3>
-                <form className="mt-4 w-80 border-black border-2  focus:outline-none flex">
+                <form className="mt-4 border-black border-2 w-full focus:outline-none flex">
                     <input
                         className="text-sm flex w-full focus:outline-none p-3 text-right pr-0 text-indigo-700 placeholder:text-left"
                         placeholder="Enter your Worldname"

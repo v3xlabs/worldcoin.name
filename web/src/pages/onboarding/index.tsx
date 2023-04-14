@@ -21,13 +21,13 @@ function Home() {
             }}
         >
             <div className="flex flex-col justify-center items-center">
-                <h3 className="text-gray-800 text-justify mt-4 w-80">
+                <h3 className="text-gray-800 text-justify mt-4">
                     <b>Everyone </b> deserves to have an <b>ENS Name.</b> This
                     app serves as a demonstration of{' '}
                     <b>sybil resistant name issuance.</b> Simply sign in with
                     the button below, and claim your worldname!
                 </h3>
-                <h3 className="text-gray-800 text-justify mt-4 w-80">
+                <h3 className="text-gray-800 text-justify mt-4">
                     Sybil Resistance is an important factor allowing for{' '}
                     <b>zero registration fees</b> and <b>no KYC</b>. This is a{' '}
                     <b>decentralized</b> application and your data stored on the{' '}

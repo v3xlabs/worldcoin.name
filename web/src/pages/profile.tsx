@@ -32,7 +32,7 @@ function Profile() {
                         </g>
                     </svg>
                 </a>
-                <div className="flex items-center justify-center text-lg bg-indigo-400 w-80 h-12 px-4 rounded-lg mt-2 text-white gap-2">
+                <div className="flex items-center justify-center text-lg bg-indigo-400 h-12 px-4 rounded-lg mt-2 text-white gap-2">
                     <h3 className="flex items-center justify-center">
                         discord
                     </h3>
