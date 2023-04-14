@@ -27,10 +27,10 @@ function OnboardingSetup() {
                 </h3>
                 <form className="mt-4 border-black border-2 w-full focus:outline-none flex">
                     <input
-                        className="text-sm flex w-full focus:outline-none p-3 text-right pr-0 text-indigo-700 placeholder:text-left"
+                        className="text-xl flex w-full focus:outline-none p-3 text-right pr-0 text-indigo-700 placeholder:text-left placeholder:text-lg"
                         placeholder="Enter your Worldname"
                     ></input>
-                    <div className="flex justify-end text-sm group p-3 pl-0">
+                    <div className="flex justify-end text-lg group p-3 pl-0">
                         .worldcoin.name
                     </div>
                 </form>

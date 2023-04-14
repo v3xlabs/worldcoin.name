@@ -1,12 +1,22 @@
+import { ConnectKitButton } from 'connectkit';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { useState } from 'react';
-import { FiArrowRight, FiHelpCircle } from 'react-icons/fi';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { FiHelpCircle } from 'react-icons/fi';
+import { useAccount } from 'wagmi';
 
 import { WorldcoinModal } from '@/components/WorldcoinModal';
 
 function Home() {
+    const { push } = useRouter();
     const [showModal, setShowModal] = useState(false);
+    const { isConnected } = useAccount();
+
+    useEffect(() => {
+        if (isConnected) {
+            push('/onboarding/setup');
+        }
+    }, [isConnected]);
 
     return (
         <motion.div
@@ -33,15 +43,21 @@ function Home() {
                     <b>decentralized</b> application and your data stored on the{' '}
                     <b>Polygon blockchain.</b>
                 </h3>
-                <Link
-                    href="/onboarding/setup"
-                    className="worldidbtn hover:bg-black group"
-                >
-                    <div className="flex justify-center items-center">
-                        Continue
-                    </div>
-                    <FiArrowRight className="ml-1 group-active:cubic-bezier(.17,.67,.83,.67) group-active:translate-x-72 transition-all duration-200 duration-500" />
-                </Link>
+                <ConnectKitButton.Custom>
+                    {({
+                        isConnected,
+
+                        show,
+
+                        address,
+                    }) => {
+                        return (
+                            <button onClick={show} className="worldidbtn mb-72">
+                                {isConnected ? address : 'Connect Wallet'}
+                            </button>
+                        );
+                    }}
+                </ConnectKitButton.Custom>
                 <button
                     onClick={() => {
                         setShowModal(true);

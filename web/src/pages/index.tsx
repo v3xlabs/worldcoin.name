@@ -6,7 +6,7 @@ function Home() {
         <div className="h-screen w-screen flex items-center justify-center">
             <div className="flex flex-col justify-center items-center">
                 <img src="/longlogo.svg" alt="logo" className="w-64" />
-                <h3 className="text-gray-800 text-center mt-4">
+                <h3 className="text-gray-800 md:text-lg text-center mt-4">
                     Using WorldID just got a whole lot easier.
                 </h3>
                 <Link
