@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.worldidbtn {
+    @apply bg-gray-900 text-white py-3 w-80 justify-center rounded-xl mt-4 focus:outline-none flex items-center overflow-hidden
+}
