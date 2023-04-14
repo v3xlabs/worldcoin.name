@@ -141,7 +141,7 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
     function tokenURI(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        return string(abi.encodePacked(baseTokenURI, tokenId.toString()));
+        return string(abi.encodePacked(baseTokenURI, tokenId));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
