@@ -10,10 +10,10 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
             >
                 <img src="/longlogo.svg" alt="logo" className="w-64 mb-2" />
             </a>
-            <div className="w-full max-w-sm mx-auto text-lg">
+            <div className="w-full max-w-sm mx-auto md:px-0 px-6 text-lg">
                 <AnimatePresence>{children}</AnimatePresence>
             </div>
-            <div className="absolute bottom-0 right-0 items-center">
+            <div className="absolute bottom-0 right-0 items-center pb-2 pr-2">
                 <div>
                     <span className="text-gray-500 text-sm mr-2">
                         Made with 💕 by{' '}

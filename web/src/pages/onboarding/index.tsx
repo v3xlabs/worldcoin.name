@@ -52,7 +52,7 @@ function Home() {
                         address,
                     }) => {
                         return (
-                            <button onClick={show} className="worldidbtn mb-72">
+                            <button onClick={show} className="worldidbtn">
                                 {isConnected ? address : 'Connect Wallet'}
                             </button>
                         );

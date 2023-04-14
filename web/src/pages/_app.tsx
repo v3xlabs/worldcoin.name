@@ -32,7 +32,7 @@ const App = ({ Component, pageProps }) => {
 
     return (
         <WagmiConfig client={client}>
-            <ConnectKitProvider>
+            <ConnectKitProvider theme="minimal" mode="light">
                 <div className={inter.className}>
                     <Layout>
                         <Component {...pageProps} />
