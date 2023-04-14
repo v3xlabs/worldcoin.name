@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {ERC721} from "solmate/tokens/ERC721.sol";
 
-import {ERC137Resolver} from "./interfaces/ERC137Resolver.sol";
+import {ERC137Resolver, EIP2304} from "./interfaces/ERC137Resolver.sol";
 import {IWorldID} from "./interfaces/IWorldID.sol";
 import {ByteHasher} from "./helpers/ByteHasher.sol";
 
@@ -12,7 +12,7 @@ import {ByteHasher} from "./helpers/ByteHasher.sol";
  * @dev This contract is the first version of the worlcoin.name resolver.
  * @author luc.eth
  */
-abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
+abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     using ByteHasher for bytes;
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -94,6 +94,15 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
         emit SupervisorUpdated(_supervisor);
     }
 
+    /// @notice Changes the tokenURI of the contract
+    /// @dev Can only be called by the current supervisor.
+    /// @param _baseTokenURI The new base token URI
+    function updateBaseTokenURI(string memory _baseTokenURI) public payable {
+        if (supervisor != msg.sender) revert NotSupervisor();
+
+        baseTokenURI = _baseTokenURI;
+    }
+
     /// @notice Changes the worldcoin smartcontracts to `_worldID`.
     /// @dev Can only be called by the current supervisor.
     /// @param _worldID The address of the new worldcoin smartcontracts.
@@ -141,8 +150,26 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    ///                                  MODIFIERS                              ///
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /// @notice Name Ownership modifier
+    /// @param node The node to check
+    modifier onlyOwner(bytes32 node) {
+        require(ownerOf(nodeToTokenId[node]) == msg.sender, "Only owner can call this function.");
+        _;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     ///                                  SET LOGIC                              ///
     ///////////////////////////////////////////////////////////////////////////////
+
+    /// @notice Sets the addr of a node
+    /// @param node The node to set
+    /// @param addr The address to set
+    function setAddr(bytes32 node, address addr) public override onlyOwner(node) {
+        revert("Not implemented");
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                  ERC721                                 ///
@@ -151,7 +178,7 @@ abstract contract WorldNameResolver is ERC137Resolver, ERC721 {
     function tokenURI(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        return string(abi.encodePacked(baseTokenURI, tokenId));
+        return string(abi.encodePacked(baseTokenURI, tokenId, "/", tokenIdToNode[tokenId]));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
