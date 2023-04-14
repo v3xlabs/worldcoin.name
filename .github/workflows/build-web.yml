@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "web/**"
+      - ".github/workflows/build-web.yml"
 
 jobs:
   build:
