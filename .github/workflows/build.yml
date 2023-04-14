@@ -3,7 +3,7 @@ name: Build Web Docker Container
 on:
   push:
     paths:
-      - "./web/**"
+      - "web/**"
 
 jobs:
   build:
