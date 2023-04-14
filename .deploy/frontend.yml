@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name-web
+  namespace: worldcoin
+  labels:
+    name: worldcoin-name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: worldcoin-name
+  template:
+    metadata:
+      labels:
+        run: worldcoin-name
+    spec:
+      containers:
+        - name: name-web
+          image: "ghcr.io/v3xlabs/worldcoin-name-web:edge"
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3000
+              name: "swarm"
+              protocol: "TCP"
+          resources: {}
+      nodeName: v3x-poseidon
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worldcoin-name
+  namespace: worldcoin
+spec:
+  selector:
+    run: worldcoin-name
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+# Traefik IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: worldcoin-name
+  namespace: worldcoin
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`worldcoin.name`) && PathPrefix(`/`)
+      kind: Rule
+      priority: 11
+      services:
+        - name: worldcoin-name
+          port: 3000
