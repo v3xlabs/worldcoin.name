@@ -63,7 +63,7 @@ function OnboardingSetup() {
     const { isFetching, isError, isSuccess, error, data } = useContractRead({
         chainId: 137,
         args: [nameHash],
-        address: '0xfe8100e8ca8d2d41203cc498aa9e6b7d87fd0d5b',
+        address: '0x45273d9488d39295eda53ea8bc7c788abab15193',
         abi: WorldCoinResolverABI,
         functionName: 'isNameTaken',
     });

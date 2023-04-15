@@ -14,8 +14,8 @@ function Transaction() {
     const { proof, name, nameHash } = useWorldIDStore();
     const [isWalletLoading, setIsWalletLoading] = useState(false);
 
-    const { data, write } = useContractWrite({
-        address: '0xfe8100e8ca8d2d41203cc498aa9e6b7d87fd0d5b',
+    const { data, write, isLoading } = useContractWrite({
+        address: '0x45273d9488d39295eda53ea8bc7c788abab15193',
         functionName: 'claimSubname',
         abi: WorldCoinResolverABI,
         mode: 'recklesslyUnprepared',
