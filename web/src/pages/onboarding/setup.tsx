@@ -1,12 +1,26 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { FiArrowRight, FiHelpCircle } from 'react-icons/fi';
+import { useAccount, useDisconnect } from 'wagmi';
 
 import { WorldcoinModal } from '@/components/WorldcoinModal';
 
 function OnboardingSetup() {
     const [showModal, setShowModal] = useState(false);
+
+    const { disconnect } = useDisconnect();
+
+    const { isConnected, address } = useAccount();
+
+    const { push } = useRouter();
+
+    useEffect(() => {
+        if (!isConnected) {
+            push('/onboarding');
+        }
+    }, [isConnected]);
 
     return (
         <motion.div
@@ -20,11 +34,21 @@ function OnboardingSetup() {
                 damping: 20,
             }}
         >
-            <div className="flex flex-col justify-center items-center">
-                <h3 className="text-gray-800 text-justify mt-4">
+            <div className="flex gap-3 flex-col justify-center items-center">
+                <p className="text-gray-800 text-justify mt-4">
                     You can claim a <b>Worldname</b> by signing in with WorldID.
                     It is free because it is <b>sybil resistant</b>.
-                </h3>
+                </p>
+                <p className="w-full break-all text-sm">
+                    You are signed in as{' '}
+                    <span className="font-semibold">{address}</span>,{' '}
+                    <button
+                        className="inline font-medium hover:underline text-indigo-600"
+                        onClick={() => disconnect()}
+                    >
+                        sign in with a different wallet
+                    </button>
+                </p>
                 <form className="mt-4 border-black border-2 w-full focus:outline-none flex">
                     <input
                         className="text-xl flex w-full focus:outline-none p-3 text-right pr-0 text-indigo-700 placeholder:text-left placeholder:text-lg"
