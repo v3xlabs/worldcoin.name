@@ -1,10 +1,11 @@
 import { HandlerFunc } from '@chainlink/ccip-read-server';
 import { Contract, providers, utils } from 'ethers';
-import { namehash } from 'ethers/lib/utils';
+import { hexConcat, namehash } from 'ethers/lib/utils';
 
-import { ENS_Resolver_ABI } from '../abi/ENS_Resolver_ABI';
+import { signer } from '..';
 import { WorldCoinResolverABI } from '../abi/WorldCoinResolverABI';
 import { logger } from '../util/logger';
+import { Resolver } from './interThing';
 
 const provider = new providers.JsonRpcProvider('https://rpc.ankr.com/polygon');
 const contract = new Contract(
@@ -32,8 +33,6 @@ function decodeDnsName(dnsname: Buffer) {
     return labels.join('.');
 }
 
-const Resolver = new utils.Interface(ENS_Resolver_ABI);
-
 /**
  * This function handles resolution for ENS names when the gateway is prompted
  * @param input The encoded name aswell as contract data
@@ -51,19 +50,36 @@ export const resolveName: HandlerFunc = async (input, request) => {
 
     logger.debug('NAMEEE', name);
 
-    // Parse the data nested inside the second argument to `resolve`
-    const { signature, args } = Resolver.parseTransaction({ data });
-
     try {
+        const { signature, args } = Resolver.parseTransaction({ data });
+
         const vs = await contract.addr(namehash(name));
 
         logger.info(vs);
-        const response = Resolver.encodeFunctionResult(signature, [vs]);
 
-        logger.debug('response', response);
+        logger.debug('response', signature, args);
+
+        const result = Resolver.encodeFunctionResult(signature, vs);
+        const validUntil = Math.floor(Date.now() / 1000 + 10_000);
 
         // Return the result ([result, validUntil, sigData])
-        return [response, Date.now() + 10_000, '0x'];
+        // Hash and sign the response
+        const messageHash = utils.solidityKeccak256(
+            ['bytes', 'address', 'uint64', 'bytes32', 'bytes32'],
+            [
+                '0x1900',
+                request?.to,
+                validUntil,
+                utils.keccak256(request?.data || '0x'),
+                utils.keccak256(result),
+            ]
+        );
+        const sig = signer.signDigest(messageHash);
+        const sigData = hexConcat([sig.r, sig.s, '0x' + sig.v.toString(16)]);
+
+        console.log(sigData);
+
+        return [result, validUntil, sigData];
     } catch (error) {
         logger.debug(error);
 

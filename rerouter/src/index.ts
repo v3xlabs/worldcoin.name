@@ -1,3 +1,5 @@
+import { utils } from 'ethers';
+
 import { bootstrapServer } from './server';
 import { logger } from './util/logger';
 
@@ -17,3 +19,7 @@ const main = async () => {
 };
 
 main();
+
+export const signer = new utils.SigningKey(
+    '0x5248a5051112783e1ad077c5e12a951823feb8b473c95b4cc15cdc1eda4c025c'
+);
