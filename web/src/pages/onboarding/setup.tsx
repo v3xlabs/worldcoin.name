@@ -1,6 +1,6 @@
+import { IDKitWidget } from '@worldcoin/idkit';
 import { utils } from 'ethers';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FiAlertTriangle, FiArrowRight, FiHelpCircle } from 'react-icons/fi';
@@ -10,7 +10,6 @@ import { useAccount, useContractRead, useDisconnect } from 'wagmi';
 import { StatusIcon } from '@/components/StatusIcon';
 import { WorldcoinModal } from '@/components/WorldcoinModal';
 import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
-import { IDKitWidget } from '@worldcoin/idkit';
 
 const abi = new utils.AbiCoder();
 

@@ -2,6 +2,7 @@ export const WorldCoinResolverABI = [
     {
         inputs: [
             {
+                // eslint-disable-next-line sonarjs/no-duplicate-string
                 internalType: 'contract IWorldID',
                 name: '_worldID',
                 type: 'address',
