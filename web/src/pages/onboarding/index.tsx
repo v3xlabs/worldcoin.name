@@ -2,7 +2,7 @@ import { ConnectKitButton } from 'connectkit';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { FiHelpCircle } from 'react-icons/fi';
+import { FiAlertTriangle, FiHelpCircle } from 'react-icons/fi';
 import { useAccount } from 'wagmi';
 
 import { WorldcoinModal } from '@/components/WorldcoinModal';
@@ -58,6 +58,15 @@ function Home() {
                         );
                     }}
                 </ConnectKitButton.Custom>
+                <div className="text-red-500 text-sm text-justify flex gap-2 mt-4 items-center">
+                    <FiAlertTriangle className="w-6 h-6" />
+                    <p>
+                        Make sure to use an external wallet,{' '}
+                        <b className="underline">NOT</b> the{' '}
+                        <b className="underline">Worldcoin Wallet</b> as it is
+                        not yet supported for transfers.
+                    </p>
+                </div>
                 <button
                     onClick={() => {
                         setShowModal(true);
