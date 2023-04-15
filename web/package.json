@@ -16,6 +16,7 @@
     "@headlessui/react": "^1.7.13",
     "@worldcoin/idkit": "^0.4.9",
     "autoprefixer": "^10.4.14",
+    "canvas-confetti": "^1.6.0",
     "connectkit": "^1.2.2",
     "ethers": "^5",
     "framer-motion": "^10.11.5",

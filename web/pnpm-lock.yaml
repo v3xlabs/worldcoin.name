@@ -10,6 +10,9 @@ dependencies:
   autoprefixer:
     specifier: ^10.4.14
     version: 10.4.14(postcss@8.4.21)
+  canvas-confetti:
+    specifier: ^1.6.0
+    version: 1.6.0
   connectkit:
     specifier: ^1.2.2
     version: 1.2.2(ethers@5.7.2)(react-dom@18.2.0)(react-is@16.13.1)(react@18.2.0)(wagmi@0.12.10)
@@ -2854,6 +2857,10 @@ packages:
 
   /caniuse-lite@1.0.30001477:
     resolution: {integrity: sha512-lZim4iUHhGcy5p+Ri/G7m84hJwncj+Kz7S5aD4hoQfslKZJgt0tHc/hafVbqHC5bbhHb+mrW2JOUHkI5KH7toQ==}
+    dev: false
+
+  /canvas-confetti@1.6.0:
+    resolution: {integrity: sha512-ej+w/m8Jzpv9Z7W7uJZer14Ke8P2ogsjg4ZMGIuq4iqUOqY2Jq8BNW42iGmNfRwREaaEfFIczLuZZiEVSYNHAA==}
     dev: false
 
   /chai@4.3.7:
