@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name-rerouter
+  namespace: worldcoin
+  labels:
+    name: worldcoin-rerouter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: worldcoin-rerouter
+  template:
+    metadata:
+      labels:
+        run: worldcoin-rerouter
+    spec:
+      containers:
+        - name: name-rerouter
+          image: "ghcr.io/v3xlabs/worldcoin-name-rerouter:edge"
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3000
+              name: "swarm"
+              protocol: "TCP"
+          resources: {}
+      nodeName: v3x-poseidon
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worldcoin-rerouter
+  namespace: worldcoin
+spec:
+  selector:
+    run: worldcoin-rerouter
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+# Traefik IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: worldcoin-rerouter
+  namespace: worldcoin
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`api.worldcoin.name`) && PathPrefix(`/`)
+      kind: Rule
+      priority: 12
+      services:
+        - name: worldcoin-rerouter
+          port: 3000
