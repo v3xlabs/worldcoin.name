@@ -1,6 +1,15 @@
 import { HandlerFunc } from '@chainlink/ccip-read-server';
+import { Contract, providers } from 'ethers';
+import { namehash } from 'ethers/lib/utils';
 
+import { WorldCoinResolverABI } from '../abi/WorldCoinResolverABI';
 import { logger } from '../util/logger';
+
+const provider = new providers.JsonRpcProvider('https://rpc.ankr.com/polygon');
+const contract = new Contract(
+    '0xFeAbAeF48E7c7D8001CE229f35F73C613aAA371A',
+    WorldCoinResolverABI
+);
 
 function decodeDnsName(dnsname: Buffer) {
     const labels = [];
@@ -38,6 +47,10 @@ export const resolveName: HandlerFunc = async (input, request) => {
 
     logger.debug('NAMEEE', name);
 
+    const vs = await contract.addr(namehash(name));
+
+    logger.info(vs);
+
     // Return the result ([result, validUntil, sigData])
-    return [];
+    return [vs, Date.now() + 10_000, '0x'];
 };
