@@ -1,24 +1,28 @@
-import { IDKitWidget, solidityEncode } from '@worldcoin/idkit';
+import {
+    IDKitWidget,
+    ISuccessResult,
+    solidityEncode,
+    internal,
+} from '@worldcoin/idkit';
 import { utils } from 'ethers';
-import { AbiCoder } from 'ethers/lib/utils.js';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiAlertTriangle, FiArrowRight, FiHelpCircle } from 'react-icons/fi';
 import { useDebounce } from 'use-debounce';
 import { useAccount, useContractRead, useDisconnect } from 'wagmi';
 
 import { StatusIcon } from '@/components/StatusIcon';
 import { WorldcoinModal } from '@/components/WorldcoinModal';
+import useWorldIDStore from '@/state/world-id';
 import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
-
-const abi = new AbiCoder();
 
 const cleanName = (v) => {
     return v.replace(/[^\da-z]/g, '').toLowerCase();
 };
 
 function OnboardingSetup() {
+    const router = useRouter();
     const [showModal, setShowModal] = useState(false);
 
     const { disconnect } = useDisconnect();
@@ -27,11 +31,17 @@ function OnboardingSetup() {
 
     const { push } = useRouter();
 
+    const { setProof, reset, setName, setNameHash } = useWorldIDStore();
+
     useEffect(() => {
         if (!isConnected) {
             push('/onboarding');
         }
     }, [isConnected]);
+
+    useEffect(() => {
+        reset();
+    }, []);
 
     const [domain, setDomain] = useState('');
     const [value] = useDebounce(domain, 200);
@@ -43,6 +53,17 @@ function OnboardingSetup() {
             console.log('Happy little trees!');
         }
     }, [value]);
+
+    const onVerify = useCallback(
+        (proof: ISuccessResult) => {
+            console.log('res', proof);
+            setName(domain);
+            setProof(proof);
+            setNameHash(nameHash);
+            router.push('/onboarding/transaction');
+        },
+        [nameHash, setProof, setName, router, domain]
+    );
 
     const { isFetching, isError, isSuccess, error, data } = useContractRead({
         chainId: 137,
@@ -114,12 +135,13 @@ function OnboardingSetup() {
                         ['bytes32', 'address'],
                         [nameHash, address]
                     )}
-                    onSuccess={(result) => console.log(result)}
+                    onSuccess={onVerify}
+                    autoClose
                     app_id="app_e6348e1a34d5b74f02ebf59a4b3f45e8"
                 >
                     {({ open }) => (
                         <button
-                            className="worldidbtn hover:bg-black group"
+                            className="worldidbtn hover:bg-black group disabled:bg-gray-500 transition-colors disabled:cursor-not-allowed"
                             onClick={open}
                             disabled={loadingState !== 'available'}
                         >
@@ -131,17 +153,11 @@ function OnboardingSetup() {
                     )}
                 </IDKitWidget>
                 <div className="text-red-600 text-sm text-justify mt-4 flex gap-2 items-center">
-                    <FiAlertTriangle className="w-4 h-4" />
+                    <FiAlertTriangle className="w-8 h-8" />
                     <p>
-                        Warning, you can only claim a Worldname once, choose
+                        <b className="uppercase underline text-base">Warning</b>
+                        , you can only claim a Worldname <b>once</b>, choose
                         carefully.
-                    </p>
-                </div>
-                <div className="text-red-600 text-sm text-justify flex gap-2 items-center">
-                    <FiAlertTriangle className="w-6 h-6" />
-                    <p>
-                        Make sure to use an external wallet, NOT the Worldcoin
-                        wallet as it is not yet supported for transfers.
                     </p>
                 </div>
                 <button
