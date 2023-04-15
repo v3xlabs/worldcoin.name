@@ -8,10 +8,12 @@ Worldcoin Name is a decentralized identity system that allows you to get your ow
 
 ## 📝 How to use
 
-Simply visit [worldcoin.name](https://worldcoin.name/?ref=github) and follow the instructions to get your own worldname.
-
 | ❗ This can only be done once          |
 | ---------------------------|
+
+Simply visit [worldcoin.name](https://worldcoin.name/?ref=github) and follow the instructions to get your own worldname. Verify using your [World app](https://worldcoin.org/download-app), and you're done!
+
+If you are not worldcoin verified [find an orb operator near you](https://worldcoin.org), to get verified.
 
 ## 🗼 ETHGlobal ETHTokyo23 
 
