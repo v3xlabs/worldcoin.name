@@ -4,7 +4,7 @@ RUN npm i -g pnpm
 
 WORKDIR /app
 
-COPY package.json
+COPY ./package.json ./package.json
 
 RUN pnpm install
 
