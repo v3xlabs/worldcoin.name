@@ -1,7 +1,7 @@
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { FaSpinner, FaWallet } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+import { FaSpinner, FaWallet } from 'react-icons/fa';
 import { useAccount, useContractWrite, useWaitForTransaction } from 'wagmi';
 
 import useWorldIDStore from '@/state/world-id';
@@ -60,26 +60,32 @@ function Transaction() {
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <div className="w-full border-2 rounded-lg border-black">
-                <div className="flex flex-col justify-center items-center">
-                    <h3 className="text-gray-800 text-justify mt-4 font-bold text-2xl underline">
-                        Confirm
-                    </h3>
-                    <h3 className="text-gray-800 text-justify px-7 justify-center flex break-all w-full p-4">
-                        Please confirm the transaction in your wallet.
-                    </h3>
-                    <h3 className="text-gray-800 text-justify flex justify-center break-all w-full p-4">
-                        You are about to claim the domain:{' '}
-                    </h3>
-                    <div className="flex font-bold">
-                        <div className="text-indigo-500">{name}</div>
-                        .worldcoin.name
-                    </div>{' '}
-                    <div className="mt-6 flex items-center justify-center flex-col">
-                        for the address:{' '}
-                        <div className="break-all px-8 mt-2 pb-4 text-indigo-500">
-                            {address}
+            <div className="w-full">
+                <div className="flex flex-col justify-center items-center gap-3 text-base">
+                    <p>You are only one step away from your worldname!</p>
+                    <p>
+                        By clicking the <b>"Claim"</b> button below you will:
+                    </p>
+                    <div className="font-bold border p-2 w-full text-center">
+                        <div className="text-sm">Receive the name</div>
+                        <div>
+                            <span className="text-indigo-500">{name}</span>
+                            .worldcoin.name
                         </div>
+                    </div>
+                    <div className="font-bold border p-2 w-full text-center">
+                        <div className="text-sm">Prove you are</div>
+                        <div>a unique human</div>
+                    </div>
+                    <div className="text-sm text-left">
+                        The name will be sent to:{' '}
+                        <a
+                            href={`https://polygonscan.com/address/${address}`}
+                            target="_blank"
+                            className="break-all text-indigo-500 hover:underline"
+                        >
+                            {address}
+                        </a>
                     </div>
                 </div>
             </div>
