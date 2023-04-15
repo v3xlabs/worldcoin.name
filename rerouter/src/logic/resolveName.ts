@@ -54,10 +54,10 @@ export const resolveName: HandlerFunc = async (input, request) => {
         logger.info(vs);
 
         // Return the result ([result, validUntil, sigData])
-        return [vs, Date.now() + 10_000, '0x'];
+        return [[vs], Date.now() + 10_000, '0x'];
     } catch (error) {
         logger.debug(error);
 
-        return [0, Date.now() + 10_000, '0x'];
+        return [[0], Date.now() + 10_000, '0x'];
     }
 };
