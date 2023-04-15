@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { FiArrowRight, FiHelpCircle } from 'react-icons/fi';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useDebounce } from 'use-debounce';
+import { useAccount, useContractRead, useDisconnect } from 'wagmi';
 
+import { StatusIcon } from '@/components/StatusIcon';
 import { WorldcoinModal } from '@/components/WorldcoinModal';
 
 function OnboardingSetup() {
@@ -21,6 +23,12 @@ function OnboardingSetup() {
             push('/onboarding');
         }
     }, [isConnected]);
+
+    const [domain, setDomain] = useState('');
+    const [value] = useDebounce(domain, 200);
+    const { isFetching, isError, isSuccess, data } = useContractRead({
+        args: [value],
+    });
 
     return (
         <motion.div
@@ -49,10 +57,28 @@ function OnboardingSetup() {
                         sign in with a different wallet
                     </button>
                 </p>
-                <form className="mt-4 border-black border-2 w-full focus:outline-none flex">
+                <form className="mt-4 border-black border-2 w-full focus:outline-none flex items-center">
+                    <div className="pl-2">
+                        <StatusIcon
+                            state={
+                                isFetching
+                                    ? 'loading'
+                                    : // eslint-disable-next-line unicorn/no-nested-ternary
+                                    isError
+                                    ? 'error'
+                                    : // eslint-disable-next-line unicorn/no-nested-ternary
+                                    isSuccess
+                                    ? 'success'
+                                    : 'taken'
+                            }
+                        />
+                    </div>
                     <input
-                        className="text-xl flex w-full focus:outline-none p-3 text-right pr-0 text-indigo-700 placeholder:text-left placeholder:text-lg"
+                        className="text-xl flex w-full focus:outline-none p-2 text-right pr-0 text-indigo-700 placeholder:text-left placeholder:text-base"
                         placeholder="Enter your Worldname"
+                        onChange={(event) => {
+                            setDomain(event.target.value);
+                        }}
                     ></input>
                     <div className="flex justify-end text-lg group p-3 pl-0">
                         .worldcoin.name
