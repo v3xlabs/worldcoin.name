@@ -18,7 +18,7 @@ contract WorldNameResolverScript is Script {
 
         WorldNameResolver controller = new WorldNameResolver(
             worldId,
-            "app_staging_fa67afc60c2f4f7563ee18665ae3b773",
+            "app_e6348e1a34d5b74f02ebf59a4b3f45e8",
             "claim-domain",
             "WorldName",
             "WRLD",
