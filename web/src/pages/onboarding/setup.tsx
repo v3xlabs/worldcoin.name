@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { FiArrowRight, FiHelpCircle } from 'react-icons/fi';
+import { FiAlertTriangle, FiArrowRight, FiHelpCircle } from 'react-icons/fi';
 import { useDebounce } from 'use-debounce';
 import { useAccount, useContractRead, useDisconnect } from 'wagmi';
 
@@ -24,10 +24,14 @@ function OnboardingSetup() {
         }
     }, [isConnected]);
 
+    // TO DO: write function that redirects the user to /onboarding/verify, once they've chosen an available domain
+
     const [domain, setDomain] = useState('');
-    const [value] = useDebounce(domain, 200);
+    const [value] = useDebounce(domain, 2000);
     const { isFetching, isError, isSuccess, data } = useContractRead({
         args: [value],
+        address: '0x820cA3cC10eCB10e35439CA77C38E75fdF6716F1',
+        abi: [],
     });
 
     return (
@@ -85,7 +89,7 @@ function OnboardingSetup() {
                     </div>
                 </form>
                 <Link
-                    href="/onboarding/setup"
+                    href="/onboarding/verify"
                     className="worldidbtn hover:bg-black group"
                 >
                     <div className="flex justify-center items-center">
@@ -93,6 +97,20 @@ function OnboardingSetup() {
                     </div>
                     <FiArrowRight className="ml-1 group-active:cubic-bezier(.17,.67,.83,.67) group-active:translate-x-72 transition-all duration-200 duration-500" />
                 </Link>
+                <div className="text-red-600 text-sm text-justify mt-4 flex gap-2 items-center">
+                    <FiAlertTriangle className="w-4 h-4" />
+                    <p>
+                        Warning, you can only claim a Worldname once, choose
+                        carefully.
+                    </p>
+                </div>
+                <div className="text-red-600 text-sm text-justify flex gap-2 items-center">
+                    <FiAlertTriangle className="w-6 h-6" />
+                    <p>
+                        Make sure to use an external wallet, NOT the Worldcoin
+                        wallet as it is not yet supported for transfers.
+                    </p>
+                </div>
                 <button
                     onClick={() => {
                         setShowModal(true);
