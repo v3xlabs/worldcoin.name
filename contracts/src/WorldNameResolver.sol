@@ -60,7 +60,6 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
     uint256 internal immutable externalNullifier;
 
     /// @dev Linking between tokenId and bytes32
-    /// TODO: this is probably hella inneficient and im going to ask a mentor how to do it better lol, please dont let me forget about this comment
     mapping(uint256 => bytes32) internal tokenIdToNode;
     mapping(bytes32 => uint256) internal nodeToTokenId;
 
@@ -230,3 +229,6 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
         // super.supportsInterface(interfaceId);
     }
 }
+
+// NEVER GONNA GIVE YOU UP!
+// you lost the game btw.
