@@ -3,14 +3,20 @@ pragma solidity ^0.8.13;
 
 import {ERC137Resolver} from "./interfaces/ERC137Resolver.sol";
 
-// TODO: leverage eip 1167 or smthing, something something delegate call idk lmeow.
+interface IExtendedResolver {
+    function resolve(bytes memory name, bytes memory data) external view returns(bytes memory);
+}
+
+interface IResolverService {
+    function resolve(bytes calldata name, bytes calldata data) external view returns(bytes memory result, uint64 expires, bytes memory sig);
+}
 
 /**
- * @title ModularResolver
- * @dev This contract is the first version of the modular resolver.
+ * @title CCIPResolver
+ * @dev This contract is the first version of the ccip resolver for worldcoin.name
  * @author luc.eth
  */
-contract ModularResolver is ERC137Resolver {
+contract CCIPResolver is IExtendedResolver {
     ///////////////////////////////////////////////////////////////////////////////
     ///                                  ERRORS                                 ///
     ///////////////////////////////////////////////////////////////////////////////
@@ -42,9 +48,9 @@ contract ModularResolver is ERC137Resolver {
     /// @notice The address of the supervisor.
     address public supervisor = msg.sender;
 
-    bytes4 public selector = this.callbackAddr.selector;
+    bytes4 public selector = this.resolve.selector;
 
-    string[] urls = ["http://localhost:3000"];
+    string[] urls = ["https://api.worldcoin.name/{sender}/{data}.json"];
 
     bytes32 publicKey;
 
@@ -69,20 +75,29 @@ contract ModularResolver is ERC137Resolver {
     ///                                  RESOLUTION                             ///
     ///////////////////////////////////////////////////////////////////////////////
 
-    function addr(bytes32 node) public view returns (address) {        
+    function resolve(
+        bytes calldata name,
+        bytes calldata data
+    ) external view returns (bytes memory) {
+        bytes memory callData = abi.encodeWithSelector(
+            IResolverService.resolve.selector,
+            name,
+            data
+        );
+
         revert OffchainLookup(
             address(this),
             urls,
-            bytes(""), // calldata
-            selector,
-            abi.encode(node)
+            callData,
+            CCIPResolver.resolveWithProof.selector,
+            callData
         );
     }
 
-    function callbackAddr(
+    function resolveWithProof(
         bytes calldata response,
         bytes calldata extraData
-    ) public view returns (address) {
+    ) external view returns (bytes memory) {
         // Something something callback
     }
 
@@ -94,10 +109,11 @@ contract ModularResolver is ERC137Resolver {
     function supportsInterface(bytes4 interfaceId) public pure returns (bool) {
         return
             interfaceId == 0x0 ||
-            interfaceId == 0x3b3b57de || // addr(bytes32 node)
-            interfaceId == 0x691f3431 || // name
-            interfaceId == 0x2203ab56 || // ABI
-            interfaceId == 0xc8690233; // pubkey
+            interfaceId == type(IExtendedResolver).interfaceId;
+            // interfaceId == 0x3b3b57de || // addr(bytes32 node)
+            // interfaceId == 0x691f3431 || // name
+            // interfaceId == 0x2203ab56 || // ABI
+            // interfaceId == 0xc8690233; // pubkey
         // super.supportsInterface(interfaceId);
     }
 }

@@ -15,7 +15,10 @@
     "dependencies": {
         "@chainlink/ccip-read-server": "^0.2.1",
         "@lvksh/logger": "^1.6.4",
-        "ethers": "^6.3.0",
+        "buffer": "^6.0.3",
+        "commander": "^10.0.1",
+        "ethers": "^5.7.2",
+        "node-buffer": "^1.0.3",
         "nodemon": "^2.0.22",
         "ts-node": "^10.9.1"
     },
@@ -25,6 +28,7 @@
         }
     },
     "devDependencies": {
+        "@types/node": "^18.15.11",
         "@typescript-eslint/parser": "^5.58.0",
         "eslint": "^8.38.0",
         "eslint-plugin-v3xlabs": "^1.6.0",
