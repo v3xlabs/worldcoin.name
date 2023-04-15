@@ -11,8 +11,6 @@ import { StatusIcon } from '@/components/StatusIcon';
 import { WorldcoinModal } from '@/components/WorldcoinModal';
 import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
 
-const abi = new utils.AbiCoder();
-
 const cleanName = (v) => {
     return v.replace(/[^\da-z]/g, '').toLowerCase();
 };
