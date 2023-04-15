@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -8,6 +9,9 @@ import { useAccount, useContractRead, useDisconnect } from 'wagmi';
 
 import { StatusIcon } from '@/components/StatusIcon';
 import { WorldcoinModal } from '@/components/WorldcoinModal';
+import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
+
+const abi = new utils.AbiCoder();
 
 function OnboardingSetup() {
     const [showModal, setShowModal] = useState(false);
@@ -27,11 +31,13 @@ function OnboardingSetup() {
     // TO DO: write function that redirects the user to /onboarding/verify, once they've chosen an available domain
 
     const [domain, setDomain] = useState('');
-    const [value] = useDebounce(domain, 2000);
-    const { isFetching, isError, isSuccess, data } = useContractRead({
-        args: [value],
-        address: '0x820cA3cC10eCB10e35439CA77C38E75fdF6716F1',
-        abi: [],
+    const [value] = useDebounce(domain, 200);
+    const { isFetching, isError, isSuccess, error, data } = useContractRead({
+        chainId: 137,
+        args: [utils.namehash(value)],
+        address: '0xfeabaef48e7c7d8001ce229f35f73c613aaa371a',
+        abi: WorldCoinResolverABI,
+        functionName: 'isNameTaken',
     });
 
     return (
@@ -51,6 +57,8 @@ function OnboardingSetup() {
                     You can claim a <b>Worldname</b> by signing in with WorldID.
                     It is free because it is <b>sybil resistant</b>.
                 </p>
+                <p>{JSON.stringify(data)}</p>
+                <p>isError: {isError && 'err' && JSON.stringify(error)}</p>
                 <p className="w-full break-all text-sm">
                     You are signed in as{' '}
                     <span className="font-semibold">{address}</span>,{' '}
