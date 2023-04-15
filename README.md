@@ -1,4 +1,4 @@
-![readme](https://user-images.githubusercontent.com/113212503/232172452-6613fb78-0add-4408-bf86-e639284da25d.png)
+[![readme](https://user-images.githubusercontent.com/113212503/232172452-6613fb78-0add-4408-bf86-e639284da25d.png)](https://worldcoin.name/?ref=github)
 
 -Insert yet to make cool banner image here-
 
