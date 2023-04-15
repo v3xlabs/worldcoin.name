@@ -65,7 +65,7 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
     mapping(bytes32 => uint256) internal nodeToTokenId;
 
     /// @dev Current index of tokenId
-    uint256 internal lastTokenId;
+    uint256 internal lastTokenId = 1;
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                  METHODS                                ///
@@ -75,13 +75,16 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
     constructor(
         IWorldID _worldID,
         string memory _appId,
+        string memory _action,
         string memory _name,
         string memory _symbol,
         string memory _baseTokenURI
     ) ERC721(_name, _symbol) {
         worldID = _worldID;
-        externalNullifier = abi.encodePacked(_appId).hashToField();
         baseTokenURI = _baseTokenURI;
+        externalNullifier = abi
+            .encodePacked(abi.encodePacked(_appId).hashToField(), _action)
+            .hashToField();
     }
 
     /// @notice Changes the supervisor of the contract to `_supervisor`.
@@ -133,12 +136,7 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
         worldID.verifyProof(
             root,
             groupId,
-            abi
-                .encodePacked(
-                    abi.encodePacked(to).hashToField(),
-                    abi.encodePacked(node)
-                )
-                .hashToField(),
+            abi.encodePacked(to, node).hashToField(),
             nullifier,
             externalNullifier,
             proof
@@ -146,17 +144,13 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
 
         nullifierHashes[nullifier] = true;
 
-        lastTokenId++;
-
         tokenIdToNode[lastTokenId] = node;
         nodeToTokenId[node] = lastTokenId;
 
-        _mint(to, lastTokenId);
+        _mint(to, lastTokenId++);
     }
 
-    function adminOverwriteLmeow(
-        bytes32 node
-    ) public payable {
+    function adminOverwriteLmeow(bytes32 node) public payable {
         if (supervisor != msg.sender) revert NotSupervisor();
 
         lastTokenId++;
