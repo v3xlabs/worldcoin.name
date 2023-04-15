@@ -97,8 +97,13 @@ contract CCIPResolver is IExtendedResolver {
     function resolveWithProof(
         bytes calldata response,
         bytes calldata extraData
-    ) external view returns (bytes memory) {
+    ) external pure returns (bytes memory) {
         // Something something callback
+        (bytes memory result, uint64 expires, bytes memory sig) = abi.decode(response, (bytes, uint64, bytes));
+
+        // Something something verify
+
+        return result;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
