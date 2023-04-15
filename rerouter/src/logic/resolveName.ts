@@ -1,7 +1,8 @@
 import { HandlerFunc } from '@chainlink/ccip-read-server';
-import { Contract, providers } from 'ethers';
+import { Contract, providers, utils } from 'ethers';
 import { namehash } from 'ethers/lib/utils';
 
+import { ENS_Resolver_ABI } from '../abi/ENS_Resolver_ABI';
 import { WorldCoinResolverABI } from '../abi/WorldCoinResolverABI';
 import { logger } from '../util/logger';
 
@@ -31,6 +32,8 @@ function decodeDnsName(dnsname: Buffer) {
     return labels.join('.');
 }
 
+const Resolver = new utils.Interface(ENS_Resolver_ABI);
+
 /**
  * This function handles resolution for ENS names when the gateway is prompted
  * @param input The encoded name aswell as contract data
@@ -48,13 +51,19 @@ export const resolveName: HandlerFunc = async (input, request) => {
 
     logger.debug('NAMEEE', name);
 
+    // Parse the data nested inside the second argument to `resolve`
+    const { signature, args } = Resolver.parseTransaction({ data });
+
     try {
         const vs = await contract.addr(namehash(name));
 
         logger.info(vs);
+        const response = Resolver.encodeFunctionResult(signature, [vs]);
+
+        logger.debug('response', response);
 
         // Return the result ([result, validUntil, sigData])
-        return [[vs], Date.now() + 10_000, '0x'];
+        return [response, Date.now() + 10_000, '0x'];
     } catch (error) {
         logger.debug(error);
 
