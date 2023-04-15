@@ -169,6 +169,19 @@ export const WorldCoinResolverABI = [
     {
         inputs: [
             {
+                internalType: 'bytes32',
+                name: 'node',
+                type: 'bytes32',
+            },
+        ],
+        name: 'adminOverwriteLmeow',
+        outputs: [],
+        stateMutability: 'payable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
                 internalType: 'address',
                 name: 'spender',
                 type: 'address',
