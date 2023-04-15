@@ -13,7 +13,7 @@ function Transaction() {
     const { proof, name, nameHash } = useWorldIDStore();
 
     const { data, write, isLoading } = useContractWrite({
-        address: '0xfeabaef48e7c7d8001ce229f35f73c613aaa371a',
+        address: '0x352e0db3f61f39b52fe06dc3783ba6d391677801',
         functionName: 'claimSubname',
         abi: WorldCoinResolverABI,
         mode: 'recklesslyUnprepared',
@@ -24,9 +24,6 @@ function Transaction() {
             proof?.nullifier_hash,
             proof && decode<BigInt[]>('uint256[8]', proof?.proof),
         ],
-        overrides: {
-            gasLimit: 1000000,
-        },
         chainId: 137,
     });
 

@@ -68,7 +68,7 @@ function OnboardingSetup() {
     const { isFetching, isError, isSuccess, error, data } = useContractRead({
         chainId: 137,
         args: [nameHash],
-        address: '0xfeabaef48e7c7d8001ce229f35f73c613aaa371a',
+        address: '0x352e0db3f61f39b52fe06dc3783ba6d391677801',
         abi: WorldCoinResolverABI,
         functionName: 'isNameTaken',
     });
@@ -132,8 +132,8 @@ function OnboardingSetup() {
                 <IDKitWidget
                     action="claim-domain"
                     signal={solidityEncode(
-                        ['bytes32', 'address'],
-                        [nameHash, address]
+                        ['address', 'bytes32'],
+                        [address, nameHash]
                     )}
                     onSuccess={onVerify}
                     autoClose

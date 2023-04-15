@@ -153,12 +153,10 @@ contract WorldNameResolver is ERC137Resolver, ERC721 {
     function adminOverwriteLmeow(bytes32 node) public payable {
         if (supervisor != msg.sender) revert NotSupervisor();
 
-        lastTokenId++;
-
         tokenIdToNode[lastTokenId] = node;
         nodeToTokenId[node] = lastTokenId;
 
-        _mint(supervisor, lastTokenId);
+        _mint(supervisor, lastTokenId++);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
