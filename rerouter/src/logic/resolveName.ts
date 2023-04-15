@@ -48,10 +48,16 @@ export const resolveName: HandlerFunc = async (input, request) => {
 
     logger.debug('NAMEEE', name);
 
-    const vs = await contract.addr(namehash(name));
+    try {
+        const vs = await contract.addr(namehash(name));
 
-    logger.info(vs);
+        logger.info(vs);
 
-    // Return the result ([result, validUntil, sigData])
-    return [vs, Date.now() + 10_000, '0x'];
+        // Return the result ([result, validUntil, sigData])
+        return [vs, Date.now() + 10_000, '0x'];
+    } catch (error) {
+        logger.debug(error);
+
+        return [0, Date.now() + 10_000, '0x'];
+    }
 };
