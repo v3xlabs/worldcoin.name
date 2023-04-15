@@ -8,7 +8,8 @@ import { logger } from '../util/logger';
 const provider = new providers.JsonRpcProvider('https://rpc.ankr.com/polygon');
 const contract = new Contract(
     '0xFeAbAeF48E7c7D8001CE229f35F73C613aAA371A',
-    WorldCoinResolverABI
+    WorldCoinResolverABI,
+    provider
 );
 
 function decodeDnsName(dnsname: Buffer) {
