@@ -12,7 +12,7 @@ import {ByteHasher} from "./helpers/ByteHasher.sol";
  * @dev This contract is the first version of the worlcoin.name resolver.
  * @author luc.eth
  */
-abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
+contract WorldNameResolver is ERC137Resolver, ERC721 {
     using ByteHasher for bytes;
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     mapping(bytes32 => uint256) internal nodeToTokenId;
 
     /// @dev Current index of tokenId
-    uint256 internal nextTokenId;
+    uint256 internal lastTokenId;
 
     ///////////////////////////////////////////////////////////////////////////////
     ///                                  METHODS                                ///
@@ -133,7 +133,12 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
         worldID.verifyProof(
             root,
             groupId,
-            abi.encodePacked(abi.encodePacked(to).hashToField(), abi.encodePacked(node)).hashToField(),
+            abi
+                .encodePacked(
+                    abi.encodePacked(to).hashToField(),
+                    abi.encodePacked(node)
+                )
+                .hashToField(),
             nullifier,
             externalNullifier,
             proof
@@ -141,12 +146,25 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
 
         nullifierHashes[nullifier] = true;
 
-        tokenIdToNode[nextTokenId] = node;
-        nodeToTokenId[node] = nextTokenId;
+        lastTokenId++;
 
-        _mint(to, nextTokenId);
+        tokenIdToNode[lastTokenId] = node;
+        nodeToTokenId[node] = lastTokenId;
 
-        nextTokenId++;
+        _mint(to, lastTokenId);
+    }
+
+    function adminOverwriteLmeow(
+        bytes32 node
+    ) public payable {
+        if (supervisor != msg.sender) revert NotSupervisor();
+
+        lastTokenId++;
+
+        tokenIdToNode[lastTokenId] = node;
+        nodeToTokenId[node] = lastTokenId;
+
+        _mint(supervisor, lastTokenId);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -156,7 +174,10 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     /// @notice Name Ownership modifier
     /// @param node The node to check
     modifier onlyOwner(bytes32 node) {
-        require(ownerOf(nodeToTokenId[node]) == msg.sender, "Only owner can call this function.");
+        require(
+            ownerOf(nodeToTokenId[node]) == msg.sender,
+            "Only owner can call this function."
+        );
         _;
     }
 
@@ -167,7 +188,7 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     /// @notice Sets the addr of a node
     /// @param node The node to set
     /// @param addr The address to set
-    function setAddr(bytes32 node, address addr) public override onlyOwner(node) {
+    function setAddr(bytes32 node, address addr) public onlyOwner(node) {
         revert("Not implemented");
     }
 
@@ -178,7 +199,16 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     function tokenURI(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        return string(abi.encodePacked(baseTokenURI, tokenId, "/", tokenIdToNode[tokenId]));
+        return
+            string(
+                abi.encodePacked(
+                    baseTokenURI,
+                    tokenId,
+                    "/",
+                    tokenIdToNode[tokenId],
+                    ".json"
+                )
+            );
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -186,7 +216,11 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     ///////////////////////////////////////////////////////////////////////////////
 
     function addr(bytes32 node) public view returns (address) {
-        return address(0x0);
+        return ownerOf(nodeToTokenId[node]);
+    }
+
+    function isNameTaken(bytes32 node) public view returns (bool) {
+        return nodeToTokenId[node] != 0;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -197,12 +231,10 @@ abstract contract WorldNameResolver is ERC137Resolver, EIP2304, ERC721 {
     function supportsInterface(
         bytes4 interfaceId
     ) public pure override returns (bool) {
-        return
-            interfaceId == 0x0 ||
-            interfaceId == 0x3b3b57de || // addr(bytes32 node)
-            interfaceId == 0x691f3431 || // name
-            interfaceId == 0x2203ab56 || // ABI
-            interfaceId == 0xc8690233; // pubkey
+        return interfaceId == 0x0 || interfaceId == 0x3b3b57de; // addr(bytes32 node)
+        // interfaceId == 0x691f3431 || // name
+        // interfaceId == 0x2203ab56 || // ABI
+        // interfaceId == 0xc8690233; // pubkey
         // super.supportsInterface(interfaceId);
     }
 }

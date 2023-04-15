@@ -6,7 +6,7 @@ interface ERC137Resolver {
 
     function addr(bytes32 node) external returns (address);
 
-    function setAddr(bytes32 node, address addr) external;
+    // function setAddr(bytes32 node, address addr) external;
 }
 
 interface EIP2304 {
