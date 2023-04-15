@@ -1,9 +1,4 @@
-import {
-    IDKitWidget,
-    ISuccessResult,
-    solidityEncode,
-    internal,
-} from '@worldcoin/idkit';
+import { IDKitWidget, ISuccessResult, solidityEncode } from '@worldcoin/idkit';
 import { utils } from 'ethers';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
@@ -68,7 +63,7 @@ function OnboardingSetup() {
     const { isFetching, isError, isSuccess, error, data } = useContractRead({
         chainId: 137,
         args: [nameHash],
-        address: '0x352e0db3f61f39b52fe06dc3783ba6d391677801',
+        address: '0xfe8100e8ca8d2d41203cc498aa9e6b7d87fd0d5b',
         abi: WorldCoinResolverABI,
         functionName: 'isNameTaken',
     });

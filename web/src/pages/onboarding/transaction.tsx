@@ -1,19 +1,21 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaSpinner, FaWallet } from 'react-icons/fa';
-import { useAccount, useContractWrite } from 'wagmi';
+import confetti from 'canvas-confetti';
+import { useAccount, useContractWrite, useWaitForTransaction } from 'wagmi';
 
 import useWorldIDStore from '@/state/world-id';
-import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
 import { decode } from '@/util/world-id';
+import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
 
 function Transaction() {
     const router = useRouter();
     const { address } = useAccount();
     const { proof, name, nameHash } = useWorldIDStore();
+    const [isWalletLoading, setIsWalletLoading] = useState(false);
 
-    const { data, write, isLoading } = useContractWrite({
-        address: '0x352e0db3f61f39b52fe06dc3783ba6d391677801',
+    const { data, write } = useContractWrite({
+        address: '0xfe8100e8ca8d2d41203cc498aa9e6b7d87fd0d5b',
         functionName: 'claimSubname',
         abi: WorldCoinResolverABI,
         mode: 'recklesslyUnprepared',
@@ -27,6 +29,29 @@ function Transaction() {
         chainId: 137,
     });
 
+    const register = useCallback(() => {
+        setIsWalletLoading(true);
+        write();
+    }, [write]);
+
+    const { isLoading, isSuccess } = useWaitForTransaction({
+        hash: data?.hash,
+    });
+
+    useEffect(() => {
+        if (!isSuccess) return;
+
+        confetti({
+            particleCount: 125,
+            spread: 50,
+            startVelocity: 35,
+            origin: {
+                y: 0.8,
+            },
+            zIndex: 10,
+        });
+    }, [isSuccess]);
+
     useEffect(() => {
         if (proof && name) return;
 
@@ -37,7 +62,7 @@ function Transaction() {
         <div className="flex flex-col justify-center items-center">
             <div className="w-full border-2 rounded-lg border-black">
                 <div className="flex flex-col justify-center items-center">
-                    <h3 className="text-gray-800 text-justify mt-4 font-bold text-xl">
+                    <h3 className="text-gray-800 text-justify mt-4 font-bold text-2xl underline">
                         Confirm
                     </h3>
                     <h3 className="text-gray-800 text-justify px-7 justify-center flex break-all w-full p-4">
@@ -58,14 +83,19 @@ function Transaction() {
                     </div>
                 </div>
             </div>
+
             <button
-                className="worldidbtn mt-4"
-                onClick={() => write()}
+                className="worldidbtn mt-4 z-20 relative"
+                onClick={register}
                 disabled={isLoading}
             >
                 Sign Transaction
-                <FaWallet className="ml-2" />
-                <FaSpinner className="ml-2 animate-spin" />
+                {!isSuccess &&
+                    (isWalletLoading || isLoading ? (
+                        <FaSpinner className="ml-2 animate-spin" />
+                    ) : (
+                        <FaWallet className="ml-2" />
+                    ))}
             </button>
         </div>
     );
