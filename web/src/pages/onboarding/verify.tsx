@@ -1,5 +1,3 @@
-import WorldID from '@/components/worldid';
-
 function Verify() {
     return (
         <div className="flex flex-col justify-center items-center">
@@ -7,7 +5,6 @@ function Verify() {
                 You can claim a <b>Worldname</b> by signing in with WorldID. It
                 is free because it is <b>sybil resistant</b>.
             </h3>
-            <WorldID />
         </div>
     );
 }

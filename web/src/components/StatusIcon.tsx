@@ -3,9 +3,11 @@ import { FC } from 'react';
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
 
 export const StatusIcon: FC<{
-    state: 'loading' | 'error' | 'success' | 'taken';
+    state: 'loading' | 'error' | 'available' | 'taken' | 'none';
 }> = ({ state }) => {
     switch (state) {
+        case 'none':
+            return;
         case 'loading':
             return (
                 <motion.div
@@ -32,7 +34,7 @@ export const StatusIcon: FC<{
                     <FiXCircle className="flex text-red-500 w-6 h-6" />{' '}
                 </motion.div>
             );
-        case 'success':
+        case 'available':
             return (
                 <motion.div
                     initial={{ scale: 0 }}

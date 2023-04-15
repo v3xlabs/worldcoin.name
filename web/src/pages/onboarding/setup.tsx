@@ -1,8 +1,8 @@
+import { IDKitWidget } from '@worldcoin/idkit';
 import { utils } from 'ethers';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FiAlertTriangle, FiArrowRight, FiHelpCircle } from 'react-icons/fi';
 import { useDebounce } from 'use-debounce';
 import { useAccount, useContractRead, useDisconnect } from 'wagmi';
@@ -12,6 +12,10 @@ import { WorldcoinModal } from '@/components/WorldcoinModal';
 import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
 
 const abi = new utils.AbiCoder();
+
+const cleanName = (v) => {
+    return v.replace(/[^\da-z]/g, '').toLowerCase();
+};
 
 function OnboardingSetup() {
     const [showModal, setShowModal] = useState(false);
@@ -32,13 +36,36 @@ function OnboardingSetup() {
 
     const [domain, setDomain] = useState('');
     const [value] = useDebounce(domain, 200);
+
+    const nameHash = useMemo(() => {
+        try {
+            return utils.namehash(value + '.worldcoin.name');
+        } catch {
+            console.log('Happy little trees!');
+        }
+    }, [value]);
+
     const { isFetching, isError, isSuccess, error, data } = useContractRead({
         chainId: 137,
-        args: [utils.namehash(value)],
+        args: [nameHash],
         address: '0xfeabaef48e7c7d8001ce229f35f73c613aaa371a',
         abi: WorldCoinResolverABI,
         functionName: 'isNameTaken',
     });
+
+    const loadingState = useMemo(() => {
+        if (value.length === 0) return 'none';
+
+        if (isFetching) return 'loading';
+
+        if (isError) return 'error';
+
+        if (isSuccess) {
+            return !data ? 'available' : 'taken';
+        }
+
+        return 'error';
+    }, [data, isSuccess, isError, isFetching, value]);
 
     return (
         <motion.div
@@ -57,8 +84,6 @@ function OnboardingSetup() {
                     You can claim a <b>Worldname</b> by signing in with WorldID.
                     It is free because it is <b>sybil resistant</b>.
                 </p>
-                <p>{JSON.stringify(data)}</p>
-                <p>isError: {isError && 'err' && JSON.stringify(error)}</p>
                 <p className="w-full break-all text-sm">
                     You are signed in as{' '}
                     <span className="font-semibold">{address}</span>,{' '}
@@ -71,40 +96,37 @@ function OnboardingSetup() {
                 </p>
                 <form className="mt-4 border-black border-2 w-full focus:outline-none flex items-center">
                     <div className="pl-2">
-                        <StatusIcon
-                            state={
-                                isFetching
-                                    ? 'loading'
-                                    : // eslint-disable-next-line unicorn/no-nested-ternary
-                                    isError
-                                    ? 'error'
-                                    : // eslint-disable-next-line unicorn/no-nested-ternary
-                                    isSuccess
-                                    ? 'success'
-                                    : 'taken'
-                            }
-                        />
+                        <StatusIcon state={loadingState} />
                     </div>
                     <input
                         className="text-xl flex w-full focus:outline-none p-2 text-right pr-0 text-indigo-700 placeholder:text-left placeholder:text-base"
                         placeholder="Enter your Worldname"
                         onChange={(event) => {
-                            setDomain(event.target.value);
+                            setDomain(cleanName(event.target.value));
                         }}
                     ></input>
                     <div className="flex justify-end text-lg group p-3 pl-0">
                         .worldcoin.name
                     </div>
                 </form>
-                <Link
-                    href="/onboarding/verify"
-                    className="worldidbtn hover:bg-black group"
+                <IDKitWidget
+                    action="claim-domain"
+                    signal={''}
+                    onSuccess={(result) => console.log(result)}
+                    app_id="app_staging_fa67afc60c2f4f7563ee18665ae3b773" // obtain this from developer.worldcoin.org
                 >
-                    <div className="flex justify-center items-center">
-                        Claim name
-                    </div>
-                    <FiArrowRight className="ml-1 group-active:cubic-bezier(.17,.67,.83,.67) group-active:translate-x-72 transition-all duration-200 duration-500" />
-                </Link>
+                    {({ open }) => (
+                        <button
+                            className="worldidbtn hover:bg-black group"
+                            onClick={open}
+                        >
+                            <div className="flex justify-center items-center">
+                                Reserve name
+                            </div>
+                            <FiArrowRight className="ml-1 group-active:cubic-bezier(.17,.67,.83,.67) group-active:translate-x-72 transition-all duration-200 duration-500" />
+                        </button>
+                    )}
+                </IDKitWidget>
                 <div className="text-red-600 text-sm text-justify mt-4 flex gap-2 items-center">
                     <FiAlertTriangle className="w-4 h-4" />
                     <p>
