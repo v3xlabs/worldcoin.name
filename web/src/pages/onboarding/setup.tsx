@@ -1,5 +1,6 @@
-import { IDKitWidget } from '@worldcoin/idkit';
+import { IDKitWidget, solidityEncode } from '@worldcoin/idkit';
 import { utils } from 'ethers';
+import { AbiCoder } from 'ethers/lib/utils.js';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,6 +11,8 @@ import { useAccount, useContractRead, useDisconnect } from 'wagmi';
 import { StatusIcon } from '@/components/StatusIcon';
 import { WorldcoinModal } from '@/components/WorldcoinModal';
 import { WorldCoinResolverABI } from '@/util/WorldCoinResolverABI';
+
+const abi = new AbiCoder();
 
 const cleanName = (v) => {
     return v.replace(/[^\da-z]/g, '').toLowerCase();
@@ -29,8 +32,6 @@ function OnboardingSetup() {
             push('/onboarding');
         }
     }, [isConnected]);
-
-    // TO DO: write function that redirects the user to /onboarding/verify, once they've chosen an available domain
 
     const [domain, setDomain] = useState('');
     const [value] = useDebounce(domain, 200);
@@ -109,14 +110,18 @@ function OnboardingSetup() {
                 </form>
                 <IDKitWidget
                     action="claim-domain"
-                    signal={''}
+                    signal={solidityEncode(
+                        ['bytes32', 'address'],
+                        [nameHash, address]
+                    )}
                     onSuccess={(result) => console.log(result)}
-                    app_id="app_staging_fa67afc60c2f4f7563ee18665ae3b773" // obtain this from developer.worldcoin.org
+                    app_id="app_e6348e1a34d5b74f02ebf59a4b3f45e8"
                 >
                     {({ open }) => (
                         <button
                             className="worldidbtn hover:bg-black group"
                             onClick={open}
+                            disabled={loadingState !== 'available'}
                         >
                             <div className="flex justify-center items-center">
                                 Reserve name
