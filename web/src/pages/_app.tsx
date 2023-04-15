@@ -5,12 +5,14 @@ import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { Inter } from 'next/font/google';
 import { useRouter } from 'next/router';
 import { createClient, WagmiConfig } from 'wagmi';
+import { polygon } from 'wagmi/chains';
 
 import { Layout } from '@/components/layout';
 
 const client = createClient(
     getDefaultClient({
         appName: 'Worldname',
+        chains: [polygon],
     })
 );
 
